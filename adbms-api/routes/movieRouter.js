@@ -19,15 +19,15 @@ movieRouter.route('/getMovies').get((req, res, next) => {
         var sqlquery = `SELECT * FROM movies `
         switch(queryType) {
             case 1: 
-                sqlquery += `ORDERBY RATING DESC `;
+                sqlquery += `ORDER BY M_RATING DESC `;
             break;
             
             case 2:
-                sqlquery += `WHERE GENRE = ? `;
+                sqlquery += `WHERE M_GENRE = ? `;
             break;
         }
         sqlquery += `LIMIT 50 OFFSET ?; `;
-        let fields = [query, offset];
+        let fields = [offset];
         tempConnection.query(sqlquery,fields,(error, res, fields)=> {
             tempConnection.release();
             if(error) {
@@ -46,3 +46,4 @@ movieRouter.route('/getByGenre').get((req, res, next)=> {
                 // get by genre type as per req, LIMIT 50
 })
 
+module.exports = movieRouter;
