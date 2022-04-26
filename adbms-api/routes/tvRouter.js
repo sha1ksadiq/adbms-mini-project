@@ -2,11 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('../helper/config');
 let connection = require('mysql2').createPool(config.database);
-const movieRouter = express.Router();
 
-movieRouter.use(bodyParser.json());
+const tvRouter = express.Router();
 
-movieRouter.route('/getMovies').get((req, res, next) => {
+tvRouter.use(bodyParser.json());
+
+tvRouter.route('/getTvShows').get((req, res, next) => {
     const offset = req.body.offset;
     const queryType = req.body.query_type; //1 = Rating, 3 = genre
     const query = req.body.query;
@@ -20,15 +21,15 @@ movieRouter.route('/getMovies').get((req, res, next) => {
         var fields = [];
         switch(queryType) {
             case 1: 
-                sqlquery = `SELECT * FROM movies ORDER BY M_RATING DESC `;
+                sqlquery = `SELECT * FROM tv_show ORDER BY TV_RATING DESC `;
             break;
 
             case 2:
-                sqlquery = `SELECT * FROM movies ORDER BY M_RATING ASC `;
+                sqlquery = `SELECT * FROM tv_show ORDER BY TV_RATING ASC `;
             break;
             
             case 3:
-                sqlquery = `SELECT * FROM movies WHERE M_GENRE = ? `;
+                sqlquery = `SELECT * FROM tv_show WHERE TV_GENRE = ? `;
                 fields.push(query);
             break;
         }
@@ -47,4 +48,7 @@ movieRouter.route('/getMovies').get((req, res, next) => {
     });
 });
 
-module.exports = movieRouter;
+tvRouter.route('/getByGenre').get((req, res, next) => {
+                const genreType = req.body.genreType;
+                //get by genre type as per request, LIMIT 50
+})
