@@ -14,36 +14,33 @@ movieRouter.route('/getMovies').get((req, res, next) => {
         if(error) {
             console.log(error);
             res.statusCode = 200;
-            return res.json({status: -1, message: "Something went wrong..."})
+            return res.json({status: -1, message: "Something went wrong..."});
         }
-        var sqlquery = `SELECT * FROM movies `
+        var sqlquery = ``;
+        var fields = [];
         switch(queryType) {
             case 1: 
-                sqlquery += `ORDER BY M_RATING DESC `;
+                sqlquery = `SELECT * FROM movies ORDER BY M_RATING DESC `;
             break;
             
             case 2:
-                sqlquery += `WHERE M_GENRE = ? `;
+                sqlquery = `SELECT * FROM movies WHERE M_GENRE = ? `;
+                fields.push(query);
             break;
         }
-        sqlquery += `LIMIT 50 OFFSET ?; `;
-        let fields = [offset];
-        tempConnection.query(sqlquery,fields,(error, res, fields)=> {
+        sqlquery += `LIMIT 50 OFFSET ?;`;
+        fields.push(offset);
+        tempConnection.query(sqlquery,fields,(error, results, fields)=> {
             tempConnection.release();
             if(error) {
                 console.log(error);
                 res.statusCode = 200;
-                return res.json({status: -1, message: "Something went wrong..."})
+                return res.json({status: -1, message: "Something went wrong..."});
             }
-            console.log(res);
+            res.statusCode = 200;
+            return res.json({status: 1, data: results, message: "Data fetched successfully"});
         });
     });
-    // get by rating, ORDER DESC, OFFSET, LIMIT 50
 });
-
-movieRouter.route('/getByGenre').get((req, res, next)=> {
-                const genreType = req.body.genreType;
-                // get by genre type as per req, LIMIT 50
-})
 
 module.exports = movieRouter;
