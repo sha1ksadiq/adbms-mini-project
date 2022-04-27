@@ -18,4 +18,9 @@ export class StreamingService {
     return this.http.get(baseURL + 'movies/getMovies', req)
     .pipe(catchError(this.processHTTPMsgService.handleError))
   }
+
+  getTvShows(req: any): Observable<any> {
+    return this.http.get(baseURL + 'tv/getTvShows', req)
+    .pipe(catchError(this.processHTTPMsgService.handleError))
+  }
 }
