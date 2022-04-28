@@ -1,6 +1,7 @@
 const express = require('express');
 
 var movieRouter = require('./routes/movieRouter');
+var tvRouter = require('./routes/tvRouter');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/api/movies', movieRouter);
+app.use('/api/tv', tvRouter);
 
 app.listen(3000, () => {
     console.log("Starting Server on PORT 3000");

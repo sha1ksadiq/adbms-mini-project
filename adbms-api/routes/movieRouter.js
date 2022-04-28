@@ -7,9 +7,9 @@ const movieRouter = express.Router();
 movieRouter.use(bodyParser.json());
 
 movieRouter.route('/getMovies').get((req, res, next) => {
-    const offset = req.body.offset;
-    const queryType = req.body.query_type; //1 = Rating, 3 = genre
-    const query = req.body.query;
+    const offset =  Number(req.query.offset);
+    const queryType = Number(req.query.query_type); //1 = Rating, 3 = genre
+    const query = req.query.query;
     connection.getConnection((error, tempConnection)=>{
         if(error) {
             console.log(error);
@@ -28,8 +28,8 @@ movieRouter.route('/getMovies').get((req, res, next) => {
             break;
             
             case 3:
-                sqlquery = `SELECT * FROM movies WHERE M_GENRE = ? `;
-                fields.push(query);
+                sqlquery = `SELECT * FROM movies WHERE M_GENRE LIKE ? `;
+                fields.push('%'+query+'%');
             break;
         }
         sqlquery += `LIMIT 50 OFFSET ?;`;
@@ -42,7 +42,17 @@ movieRouter.route('/getMovies').get((req, res, next) => {
                 return res.json({status: -1, message: "Something went wrong..."});
             }
             res.statusCode = 200;
-            return res.json({status: 1, data: results, message: "Data fetched successfully"});
+            return res.json({status: 1, data: results.map(obj => {
+                obj['num'] = obj['m_id']
+                obj['name'] = obj['m_name']
+                obj['rating'] = obj['m_rating']
+                obj['genre'] = obj['m_genre']
+                delete obj['m_id']
+                delete obj['m_name']
+                delete obj['m_rating']
+                delete obj['m_genre']
+                return obj
+            }), message: "Data fetched successfully"});
         });
     });
 });

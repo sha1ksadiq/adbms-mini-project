@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+table {
+    width: 80%;
+    margin: auto;
+}
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+    margin-top: 16px;
+}
+.mat-form-field {
+    margin-top: 16px;
+}

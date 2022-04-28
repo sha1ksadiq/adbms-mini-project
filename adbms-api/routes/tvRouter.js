@@ -8,9 +8,9 @@ const tvRouter = express.Router();
 tvRouter.use(bodyParser.json());
 
 tvRouter.route('/getTvShows').get((req, res, next) => {
-    const offset = req.body.offset;
-    const queryType = req.body.query_type; //1 = Rating, 3 = genre
-    const query = req.body.query;
+    const offset =  Number(req.query.offset);
+    const queryType = Number(req.query.query_type); //1 = Rating, 3 = genre
+    const query = req.query.query;
     connection.getConnection((error, tempConnection)=>{
         if(error) {
             console.log(error);
@@ -29,8 +29,8 @@ tvRouter.route('/getTvShows').get((req, res, next) => {
             break;
             
             case 3:
-                sqlquery = `SELECT * FROM tv_show WHERE TV_GENRE = ? `;
-                fields.push(query);
+                sqlquery = `SELECT * FROM tv_show WHERE TV_GENRE LIKE ? `;
+                fields.push("%"+query+"%");
             break;
         }
         sqlquery += `LIMIT 50 OFFSET ?;`;
@@ -43,12 +43,19 @@ tvRouter.route('/getTvShows').get((req, res, next) => {
                 return res.json({status: -1, message: "Something went wrong..."});
             }
             res.statusCode = 200;
-            return res.json({status: 1, data: results, message: "Data fetched successfully"});
+            return res.json({status: 1, data: results.map(obj => {
+                obj['num'] = obj['tv_id']
+                obj['name'] = obj['tv_name']
+                obj['rating'] = obj['tv_rating']
+                obj['genre'] = obj['tv_genre']
+                delete obj['tv_id']
+                delete obj['tv_name']
+                delete obj['tv_rating']
+                delete obj['tv_genre']
+                return obj
+            }), message: "Data fetched successfully"});
         });
     });
 });
 
-tvRouter.route('/getByGenre').get((req, res, next) => {
-                const genreType = req.body.genreType;
-                //get by genre type as per request, LIMIT 50
-})
+module.exports = tvRouter;
